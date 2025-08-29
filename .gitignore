@@ -177,3 +177,6 @@ local_config.sh
 # Keep analysis_output directory but ignore most contents
 analysis_output/*
 !analysis_output/.gitkeep
+
+# Legacy reports directory (now deprecated)
+reports/

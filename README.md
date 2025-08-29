@@ -337,6 +337,9 @@ The tutorial automatically generates:
 - Tool version information for reproducibility
 - Actionable recommendations categorized by priority
 
+### **📖 Quick Reference**
+- `cheat_sheet.md` - Command-line reference for all tools with common usage patterns
+
 ### **🔧 Integration Configurations**
 - `.pre-commit-config.yaml` - Git hooks setup
 - `.github/workflows/quality.yml` - GitHub Actions workflow
