@@ -11,10 +11,24 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Source the helper modules
 source "$SCRIPT_DIR/lib/tutorial_helpers.sh"
 source "$SCRIPT_DIR/lib/tool_runner.sh"
+source "$SCRIPT_DIR/lib/bandit_educational.sh"
+source "$SCRIPT_DIR/lib/flake8_educational.sh"
+source "$SCRIPT_DIR/lib/black_educational.sh"
+source "$SCRIPT_DIR/lib/mypy_educational.sh"
+source "$SCRIPT_DIR/lib/isort_educational.sh"
+source "$SCRIPT_DIR/lib/pytest_educational.sh"
 
 # Configuration
 CONFIG_FILE="$SCRIPT_DIR/config/tools.conf"
+INDIVIDUAL_TOOLS_CONFIG="$SCRIPT_DIR/config/individual_tools.conf"
 TUTORIAL_MODE="${1:-interactive}"
+
+# Export configuration paths for child scripts
+export SCRIPT_DIR
+export INDIVIDUAL_TOOLS_CONFIG
+
+# Source individual tool runner after exporting variables
+source "$SCRIPT_DIR/lib/individual_tool_runner.sh"
 
 # Main tutorial orchestrator
 run_interactive_tutorial() {
@@ -787,10 +801,30 @@ wrap_up_tutorial() {
 run_automated_mode() {
     print_header "🤖 Automated Analysis Mode"
     
+    # Use the new automated tools configuration
+    local automated_config="$SCRIPT_DIR/config/automated_tools.conf"
+    
+    # Load the automated configuration
+    if [ -f "$automated_config" ]; then
+        source "$automated_config"
+        log_success "Loaded automated mode configuration"
+    else
+        # Fallback to legacy configuration
+        automated_config="$CONFIG_FILE"
+        log_warning "Using legacy configuration"
+    fi
+    
     setup_tutorial_environment
     
+    # Prepare all working directories with example files
+    if declare -f prepare_all_working_dirs >/dev/null; then
+        log_step "Preparing working directories"
+        prepare_all_working_dirs
+        log_success "Working directories prepared with example files"
+    fi
+    
     log_step "Running comprehensive analysis"
-    run_tool_suite "$CONFIG_FILE"
+    run_tool_suite "$automated_config"
     
     log_step "Generating reports"
     generate_report
@@ -801,17 +835,28 @@ run_automated_mode() {
 # Main entry point
 main() {
     case "${TUTORIAL_MODE}" in
-        "interactive"|"")
+        "interactive"|""|"menu")
+            handle_main_menu
+            ;;
+        "full"|"tutorial")
             run_interactive_tutorial
+            ;;
+        "tools"|"individual")
+            setup_individual_tools_environment
+            run_interactive_tool_selection false
+            ;;
+        "autofix")
+            setup_individual_tools_environment
+            run_interactive_tool_selection true
             ;;
         "automated"|"auto")
             run_automated_mode
             ;;
-        "fix"|"autofix")
+        "fix")
             setup_tutorial_environment
             run_fix_mode "$CONFIG_FILE"
             ;;
-        "--help"|"-h")
+        "--help"|"-h"|"help")
             show_usage
             ;;
         *)
@@ -822,6 +867,93 @@ main() {
     esac
 }
 
+# Main menu for tutorial modes
+show_main_menu() {
+    print_header "🚀 Python Code Quality Tools Tutorial"
+    
+    echo "Tutorial Modes:"
+    echo "  1. Full Tutorial    - Complete guided tutorial with explanations"
+    echo "  2. Individual Tools - Select and run specific tools interactively"  
+    echo "  3. Autofix Mode     - Individual tools with automatic fixing enabled"
+    echo "  4. Automated Run    - Run all tools without interaction"
+    echo "  5. Help            - Show detailed usage information"
+    echo ""
+    echo "  0. Exit"
+    echo ""
+}
+
+# Handle main menu selection
+handle_main_menu() {
+    while true; do
+        show_main_menu
+        echo -n "Select mode: "
+        read -r choice
+        echo ""
+        
+        case "$choice" in
+            1|"full"|"tutorial")
+                run_interactive_tutorial
+                break
+                ;;
+            2|"individual"|"tools")
+                setup_individual_tools_environment
+                run_interactive_tool_selection false
+                break
+                ;;
+            3|"autofix")
+                setup_individual_tools_environment  
+                run_interactive_tool_selection true
+                break
+                ;;
+            4|"automated"|"auto")
+                run_automated_mode
+                break
+                ;;
+            5|"help")
+                show_usage
+                echo ""
+                echo "Press Enter to continue..."
+                read -r
+                ;;
+            0|"exit"|"quit")
+                log_info "Goodbye!"
+                exit 0
+                ;;
+            *)
+                log_error "Invalid selection: $choice"
+                echo ""
+                echo "Press Enter to continue..."
+                read -r
+                ;;
+        esac
+    done
+}
+
+# Setup environment for individual tools mode
+setup_individual_tools_environment() {
+    print_subheader "Environment Setup"
+    
+    # Load individual tools configuration
+    if [ -f "$INDIVIDUAL_TOOLS_CONFIG" ]; then
+        source "$INDIVIDUAL_TOOLS_CONFIG"
+        log_success "Loaded individual tools configuration"
+    else
+        log_error "Individual tools configuration not found: $INDIVIDUAL_TOOLS_CONFIG"
+        exit 1
+    fi
+    
+    # Setup virtual environment and install tools (reuse existing function)
+    setup_venv "$VENV_NAME" "$REQUIREMENTS_FILE"
+    
+    # Create analysis output directories
+    for tool in bandit flake8 black mypy isort pytest; do
+        mkdir -p "${TOOL_OUTPUT_DIRS[$tool]}"
+    done
+    
+    log_success "Environment ready for individual tool analysis"
+    echo ""
+}
+
 # Show usage information
 show_usage() {
     cat << EOF
@@ -830,19 +962,29 @@ Python Code Quality Tools Tutorial
 Usage: $0 [mode]
 
 Modes:
-  interactive  Interactive tutorial with explanations (default)
-  automated    Automated analysis without prompts
-  fix          Run auto-fix mode only
-  --help       Show this help message
+  interactive  Show main menu for mode selection (default)
+  full         Complete guided tutorial with explanations  
+  tools        Interactive individual tool selection
+  autofix      Individual tools with automatic fixing enabled
+  automated    Run all tools without interaction
+  fix          Legacy auto-fix mode
+  help         Show this help message
 
 Examples:
-  $0                    # Interactive tutorial
-  $0 interactive        # Same as above
-  $0 automated          # Run analysis without interaction
-  $0 fix               # Apply automatic fixes only
+  $0                    # Show interactive main menu
+  $0 full              # Run complete tutorial
+  $0 tools             # Select individual tools interactively
+  $0 autofix           # Individual tools with autofix enabled
+  $0 automated         # Run all tools automatically
+
+Features:
+  - Tool-specific directories with isolated examples
+  - Safe autofix (preserves original bad examples)
+  - Individual tool configuration files
+  - Comprehensive output and reporting
 
 The tutorial covers bandit, flake8, black, mypy, isort, and pytest.
-All output is saved to the analysis_output/ directory.
+All output is saved to tool-specific directories in analysis_output/.
 EOF
 }
 

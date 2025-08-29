@@ -9,9 +9,12 @@ DO NOT FIX - This file is intentionally broken for educational purposes.
 Run: flake8 flake8_style_example_donot_fixme.py
 """
 
-import os,sys,json # E401: multiple imports on one line
-import unused_module # F401: imported but unused
+import json
+import os  # E401: multiple imports on one line
+import sys
 from collections import *  # F403: star import
+
+import unused_module  # F401: imported but unused
 
 
 # E302: expected 2 blank lines, found 1

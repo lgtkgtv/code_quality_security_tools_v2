@@ -9,7 +9,6 @@ All flake8 violations from the "donot_fixme" version have been fixed.
 import json
 import os
 import sys
-
 # FIXED: Import each item on separate line with proper spacing
 from typing import Dict, List, Optional
 
@@ -29,11 +28,11 @@ class UserManager:
         self,
         name: str,
         email: str,
-        age: int = 18  # FIXED: Proper spacing around default parameter
+        age: int = 18,  # FIXED: Proper spacing around default parameter
     ) -> Optional[Dict[str, any]]:
         """
         Create user with validation.
-        
+
         FIXED: Proper line continuation and parameter spacing.
         """
         # FIXED: Proper spacing around operators and use 'is' for None
@@ -56,7 +55,7 @@ class UserManager:
     def validate_email(self, email: str) -> bool:
         """
         Validate email format.
-        
+
         FIXED: Simplified logic to reduce complexity.
         """
         # FIXED: Use 'is None' instead of '== None'
@@ -108,7 +107,7 @@ def calculate_total(items: List[Dict[str, float]]) -> float:
 
     for item in items:
         # FIXED: Proper indentation (4 spaces)
-        total += item['price']
+        total += item["price"]
 
     return total
 
@@ -136,16 +135,13 @@ if __name__ == "__main__":
     # Example usage
     manager = UserManager("John", 25, "john@example.com")
     user_data = manager.create_user("Alice", "alice@example.com", 30)
-    
+
     if user_data:
         print(f"Created user: {user_data}")
-    
+
     # Test email validation
-    valid_emails = [
-        "user@example.com",
-        "test.email@domain.org"
-    ]
-    
+    valid_emails = ["user@example.com", "test.email@domain.org"]
+
     for email in valid_emails:
         is_valid = manager.validate_email(email)
         print(f"Email {email} is {'valid' if is_valid else 'invalid'}")

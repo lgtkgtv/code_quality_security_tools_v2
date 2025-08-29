@@ -114,7 +114,17 @@ check_command() {
 
 check_python_package() {
     local package="$1"
-    if python -c "import $package" 2>/dev/null; then
+    local python_cmd=""
+    if command -v python3 >/dev/null 2>&1; then
+        python_cmd="python3"
+    elif command -v python >/dev/null 2>&1; then
+        python_cmd="python"
+    else
+        log_error "Neither python nor python3 found in PATH"
+        return 1
+    fi
+    
+    if $python_cmd -c "import $package" 2>/dev/null; then
         return 0
     else
         log_error "Python package '$package' not found"
@@ -142,8 +152,21 @@ setup_venv() {
     
     log_step "Setting up virtual environment: $venv_name"
     
+    # Determine Python command
+    local python_cmd=""
+    if command -v python3 >/dev/null 2>&1; then
+        python_cmd="python3"
+    elif command -v python >/dev/null 2>&1; then
+        python_cmd="python"
+    else
+        log_error "Neither python nor python3 found in PATH"
+        return 1
+    fi
+    
+    log_info "Using Python command: $python_cmd"
+    
     if [ ! -d "$venv_name" ]; then
-        python -m venv "$venv_name"
+        $python_cmd -m venv "$venv_name"
         log_success "Created virtual environment"
     fi
     
@@ -289,7 +312,13 @@ get_tool_version() {
     
     case "$tool" in
         "python")
-            python --version 2>&1 | cut -d' ' -f2
+            if command -v python3 >/dev/null 2>&1; then
+                python3 --version 2>&1 | cut -d' ' -f2
+            elif command -v python >/dev/null 2>&1; then
+                python --version 2>&1 | cut -d' ' -f2
+            else
+                echo "not found"
+            fi
             ;;
         "pip")
             pip --version | cut -d' ' -f2

@@ -180,3 +180,15 @@ analysis_output/*
 
 # Legacy reports directory (now deprecated)
 reports/
+
+# Tool working directories (temporary files for educational mode)
+tools/*/working_files/*.py
+tools/*/working_files/*.txt
+
+# Temporary output from educational sessions
+/tmp/bandit_*
+/tmp/flake8_*
+/tmp/black_*
+/tmp/mypy_*
+/tmp/isort_*
+/tmp/pytest_*

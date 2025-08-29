@@ -10,9 +10,9 @@ Run: bandit bandit_security_example_donot_fixme.py
 """
 
 import os
-import subprocess
 import pickle
 import random
+import subprocess
 
 
 def unsafe_shell_execution():
@@ -70,6 +70,31 @@ def sql_injection_risk():
     return query
 
 
+def legitimate_assert_usage():
+    """FALSE POSITIVE EXAMPLE: Assert used for development debugging"""
+    # This is a legitimate use of assert for development/debugging
+    # In production, asserts are disabled with -O flag anyway
+    debug_mode = True
+    assert debug_mode, "Debug mode should be enabled during development"  # bandit B101 - FALSE POSITIVE
+
+
+def safe_subprocess_usage():
+    """FALSE POSITIVE EXAMPLE: Subprocess with validated, safe command"""
+    # This subprocess call is actually safe - we control the command completely
+    import subprocess
+    log_file = "/var/log/myapp.log"
+    
+    # Safe subprocess - we control all arguments, no user input
+    # This might trigger B603 or B607 but is actually secure
+    try:
+        result = subprocess.run(["/usr/bin/tail", "-10", log_file], 
+                               capture_output=True, check=True)  # bandit might flag this - FALSE POSITIVE
+        return result.stdout
+    except subprocess.CalledProcessError:
+        print("Log file not accessible")
+        return None
+
+
 if __name__ == "__main__":
     # All these functions contain security vulnerabilities
     unsafe_shell_execution()
@@ -78,3 +103,9 @@ if __name__ == "__main__":
     hardcoded_credentials()
     unsafe_temp_file()
     sql_injection_risk()
+    
+    # These are examples of false positives
+    legitimate_assert_usage()
+    safe_subprocess_usage()
+    
+    print("Security vulnerabilities and false positive examples demonstrated")

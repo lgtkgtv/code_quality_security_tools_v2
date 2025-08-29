@@ -48,61 +48,61 @@ def example_function():
     # Using standard library
     current_time = datetime.datetime.now()
     temp_dir = tempfile.mkdtemp()
-    
+
     # Using third-party packages
     response = requests.get("https://api.example.com")
     df = pd.DataFrame({"data": [1, 2, 3]})
-    
+
     # Using local imports
     user = User("example")
     auth_result = authenticate_user("token")
-    
+
     return {
         "time": current_time,
         "temp": temp_dir,
         "response": response.status_code,
         "data": df,
         "user": user,
-        "auth": auth_result
+        "auth": auth_result,
     }
 
 
 def demonstrate_import_benefits():
     """
     Benefits of proper import organization:
-    
+
     1. READABILITY: Easy to see what dependencies the module has
     2. MAINTAINABILITY: Easy to add/remove imports in the right place
     3. CONFLICT AVOIDANCE: Reduces naming conflicts between modules
     4. STANDARDS COMPLIANCE: Follows PEP 8 and community best practices
     5. TOOL COMPATIBILITY: Works well with IDEs and other tools
     """
-    
+
     # Standard library usage examples
     data_dict = defaultdict(list)
     current_path = Path(__file__)
-    
-    # Third-party usage examples  
+
+    # Third-party usage examples
     array_data = np.array([1, 2, 3, 4, 5])
     web_response = requests.get("https://httpbin.org/json")
-    
+
     # Local module usage examples
     helper_result = helper_function()
     user_obj = User("test_user")
-    
+
     return {
         "dict": data_dict,
         "path": current_path,
         "array": array_data,
         "response": web_response,
         "helper": helper_result,
-        "user": user_obj
+        "user": user_obj,
     }
 
 
 # The imports above follow isort principles:
 # 1. Correct order: standard library → third-party → local
-# 2. Blank lines separating each section  
+# 2. Blank lines separating each section
 # 3. Alphabetical sorting within each section
 # 4. Consistent style (from imports after regular imports)
 # 5. Clear separation makes dependencies obvious

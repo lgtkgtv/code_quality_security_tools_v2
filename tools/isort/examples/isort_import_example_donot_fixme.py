@@ -10,44 +10,46 @@ Run: isort --diff isort_import_example_donot_fixme.py (to see what would change)
 Run: isort isort_import_example_donot_fixme.py (to actually organize)
 """
 
-# WRONG ORDER: Third-party imports should come after standard library
-import requests
-import sys
-from collections import defaultdict
-import json
-from typing import List, Dict
-import os
-# WRONG: Local imports mixed with standard library
-from .local_module import helper_function
-import datetime
-# WRONG: More third-party imports after standard library
-import pandas as pd
-from flask import Flask, request
-# WRONG: Standard library import after third-party
-import re
-from pathlib import Path
-# WRONG: Another local import in wrong place
-from ..utils import database_utils
-# WRONG: More mixing of import types
-import sqlite3
-import numpy as np
-from .models import User, Product
-import logging
-from django.conf import settings
 # WRONG: Single import after from imports
 import asyncio
-from concurrent.futures import ThreadPoolExecutor
-# WRONG: More standard library mixed in
-import tempfile
-# WRONG: More third-party
-import click
-from elasticsearch import Elasticsearch
+import datetime
 # WRONG: More standard library
 import hashlib
+import json
+import logging
+import os
+# WRONG: Standard library import after third-party
+import re
+# WRONG: More mixing of import types
+import sqlite3
+import sys
+# WRONG: More standard library mixed in
+import tempfile
+from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
+from typing import Dict, List
 from urllib.parse import urlparse
+
+# WRONG: More third-party
+import click
+import numpy as np
+# WRONG: More third-party imports after standard library
+import pandas as pd
+# WRONG ORDER: Third-party imports should come after standard library
+import requests
+from django.conf import settings
+from elasticsearch import Elasticsearch
+from flask import Flask, request
+
+from ..services.auth import authenticate_user
+# WRONG: Another local import in wrong place
+from ..utils import database_utils
 # WRONG: More local imports
 from .config import DATABASE_URL
-from ..services.auth import authenticate_user
+# WRONG: Local imports mixed with standard library
+from .local_module import helper_function
+from .models import Product, User
 
 
 def example_function():

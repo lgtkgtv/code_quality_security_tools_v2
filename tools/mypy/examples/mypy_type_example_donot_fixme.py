@@ -9,7 +9,7 @@ DO NOT FIX - This file is intentionally broken for educational purposes.
 Run: mypy mypy_type_example_donot_fixme.py
 """
 
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
 
 
 def process_numbers(numbers):
@@ -103,6 +103,7 @@ def work_with_any():
 def get_dynamic_data():
     """Function with no return type annotation."""
     import json
+
     # Could return anything - mypy treats as Any
     return json.loads('{"key": "value"}')
 

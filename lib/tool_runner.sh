@@ -2,9 +2,7 @@
 # Tool Runner Module
 # Provides standardized tool execution and result processing
 
-# Source the helper library
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/tutorial_helpers.sh"
+# Helper library is already sourced by the main script
 
 # Global variables for results tracking
 declare -A TOOL_RESULTS
@@ -19,6 +17,8 @@ run_tool() {
     local description="$5"
     
     log_step "Running $tool_name analysis"
+    log_info "Command: $tool_command"
+    log_info "Target: $input_files"
     
     start_timer
     
@@ -83,8 +83,14 @@ process_bandit_result() {
     local expected_issues="$3"
     
     local issues=$(grep -c "Issue:" "$output_file" 2>/dev/null || echo "0")
+    issues=${issues//[^0-9]/}  # Remove non-numeric characters
+    issues=${issues:-0}        # Default to 0 if empty
     local high_severity=$(grep -c "Severity: High" "$output_file" 2>/dev/null || echo "0")
+    high_severity=${high_severity//[^0-9]/}
+    high_severity=${high_severity:-0}
     local medium_severity=$(grep -c "Severity: Medium" "$output_file" 2>/dev/null || echo "0")
+    medium_severity=${medium_severity//[^0-9]/}
+    medium_severity=${medium_severity:-0}
     
     if [ "$issues" -eq 0 ]; then
         echo "pass|No security issues found"
@@ -101,8 +107,14 @@ process_flake8_result() {
     local expected_issues="$3"
     
     local issues=$(wc -l < "$output_file" 2>/dev/null || echo "0")
+    issues=${issues//[^0-9]/}  # Remove non-numeric characters
+    issues=${issues:-0}        # Default to 0 if empty
     local errors=$(grep -c ": E" "$output_file" 2>/dev/null || echo "0")
+    errors=${errors//[^0-9]/}
+    errors=${errors:-0}
     local warnings=$(grep -c ": W" "$output_file" 2>/dev/null || echo "0")
+    warnings=${warnings//[^0-9]/}
+    warnings=${warnings:-0}
     
     if [ "$issues" -eq 0 ]; then
         echo "pass|Code follows PEP8 standards"
@@ -121,6 +133,8 @@ process_black_result() {
         echo "pass|Code is properly formatted"
     else
         local reformatted=$(grep -c "reformatted" "$output_file" 2>/dev/null || echo "0")
+        reformatted=${reformatted//[^0-9]/}  # Remove non-numeric characters
+        reformatted=${reformatted:-0}        # Default to 0 if empty
         if [ "$reformatted" -gt 0 ]; then
             echo "warning|Would reformat $reformatted files"
         else
@@ -135,8 +149,14 @@ process_mypy_result() {
     local expected_issues="$3"
     
     local errors=$(grep -c "error:" "$output_file" 2>/dev/null || echo "0")
+    errors=${errors//[^0-9]/}  # Remove non-numeric characters
+    errors=${errors:-0}        # Default to 0 if empty
     local warnings=$(grep -c "warning:" "$output_file" 2>/dev/null || echo "0")
+    warnings=${warnings//[^0-9]/}
+    warnings=${warnings:-0}
     local notes=$(grep -c "note:" "$output_file" 2>/dev/null || echo "0")
+    notes=${notes//[^0-9]/}
+    notes=${notes:-0}
     
     if [ "$errors" -eq 0 ] && [ "$warnings" -eq 0 ]; then
         echo "pass|No type errors found"
@@ -155,6 +175,8 @@ process_isort_result() {
         echo "pass|Import statements are properly sorted"
     else
         local fixed=$(grep -c "Fixing" "$output_file" 2>/dev/null || echo "0")
+        fixed=${fixed//[^0-9]/}  # Remove non-numeric characters
+        fixed=${fixed:-0}        # Default to 0 if empty
         if [ "$fixed" -gt 0 ]; then
             echo "warning|Would sort imports in $fixed files"
         else
@@ -168,8 +190,14 @@ process_pytest_result() {
     local exit_code="$2"
     
     local passed=$(grep -o "[0-9]\+ passed" "$output_file" | cut -d' ' -f1 || echo "0")
+    passed=${passed//[^0-9]/}  # Remove non-numeric characters
+    passed=${passed:-0}        # Default to 0 if empty
     local failed=$(grep -o "[0-9]\+ failed" "$output_file" | cut -d' ' -f1 || echo "0")
+    failed=${failed//[^0-9]/}
+    failed=${failed:-0}
     local errors=$(grep -o "[0-9]\+ error" "$output_file" | cut -d' ' -f1 || echo "0")
+    errors=${errors//[^0-9]/}
+    errors=${errors:-0}
     
     if [ "$exit_code" -eq 0 ]; then
         echo "pass|All tests passed ($passed tests)"
