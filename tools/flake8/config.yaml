@@ -1,0 +1,15 @@
+# Flake8 Style Checker Configuration
+
+name: "flake8"
+description: "PEP8 style checker and code quality linter"
+category: "style"
+version_command: "flake8 --version"
+check_command: "flake8"
+fix_command: "# Manual fixes required - flake8 only detects issues"
+documentation_url: "https://flake8.pycqa.org/"
+installation: "pip install flake8"
+
+# Educational settings
+show_diff: false
+show_context_lines: 3
+max_output_lines: 20

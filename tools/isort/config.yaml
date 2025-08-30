@@ -1,0 +1,15 @@
+# isort Import Sorter Configuration
+
+name: "isort"
+description: "Python import organizer and sorter"
+category: "imports"
+version_command: "isort --version"
+check_command: "isort --check-only --diff"
+fix_command: "isort"
+documentation_url: "https://pycqa.github.io/isort/"
+installation: "pip install isort"
+
+# Educational settings
+show_diff: true
+show_context_lines: 5
+max_output_lines: 25

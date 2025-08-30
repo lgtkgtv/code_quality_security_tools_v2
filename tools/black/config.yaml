@@ -1,0 +1,15 @@
+# Black Code Formatter Configuration
+
+name: "black"
+description: "Automatic Python code formatter"
+category: "formatting"
+version_command: "black --version"
+check_command: "black --check --diff"
+fix_command: "black"
+documentation_url: "https://black.readthedocs.io/"
+installation: "pip install black"
+
+# Educational settings
+show_diff: true
+show_context_lines: 5
+max_output_lines: 25

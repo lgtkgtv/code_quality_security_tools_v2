@@ -1,0 +1,15 @@
+# Bandit Security Scanner Configuration
+
+name: "bandit"
+description: "Security vulnerability scanner for Python code"
+category: "security"
+version_command: "bandit --version"
+check_command: "bandit -r"
+fix_command: "# Manual fixes required - bandit only detects issues"
+documentation_url: "https://bandit.readthedocs.io/"
+installation: "pip install bandit"
+
+# Educational settings
+show_diff: false
+show_context_lines: 3
+max_output_lines: 20

@@ -1,0 +1,15 @@
+# Pytest Testing Framework Configuration
+
+name: "pytest"
+description: "Python testing framework for unit and integration tests"
+category: "testing"
+version_command: "pytest --version"
+check_command: "pytest -v"
+fix_command: "# Write tests and fix failing test cases"
+documentation_url: "https://docs.pytest.org/"
+installation: "pip install pytest"
+
+# Educational settings
+show_diff: false
+show_context_lines: 3
+max_output_lines: 20

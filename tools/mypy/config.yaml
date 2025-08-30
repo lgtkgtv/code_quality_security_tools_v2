@@ -1,0 +1,15 @@
+# MyPy Static Type Checker Configuration
+
+name: "mypy"
+description: "Static type checker for Python"
+category: "typing"
+version_command: "mypy --version"
+check_command: "mypy --ignore-missing-imports"
+fix_command: "# Manual fixes required - add type hints and fix type errors"
+documentation_url: "https://mypy.readthedocs.io/"
+installation: "pip install mypy"
+
+# Educational settings
+show_diff: false
+show_context_lines: 3
+max_output_lines: 20

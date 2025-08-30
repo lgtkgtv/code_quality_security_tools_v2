@@ -1,0 +1,17 @@
+# Tool Configuration Template
+# Copy this directory and rename it to your tool name
+# Update all fields below
+
+name: "tool-name"
+description: "One-line description of what this tool does"
+category: "security|style|typing|testing"
+version_command: "tool-name --version"
+check_command: "tool-name --check"
+fix_command: "tool-name --fix"
+documentation_url: "https://tool-name.readthedocs.io/"
+installation: "pip install tool-name"
+
+# Educational settings
+show_diff: true
+show_context_lines: 3
+max_output_lines: 20
